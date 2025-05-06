@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { signUpSchema } from "@/schemas/signUpSchema";
 import { OtpInput } from "./OtpInput"; // Import the OTP input component
+import Spinner from "./ui/Spinner"; // Import the Spinner component
 import { useRouter } from "next/navigation";
 
 export function SignUpForm() {
@@ -63,7 +64,9 @@ export function SignUpForm() {
       } else {
         // Handle other statuses like 'expired'
         console.error("Verification failed", result.status);
-        setVerificationErrors(`Verification failed: ${result.status}. Please try again.`);
+        setVerificationErrors(
+          `Verification failed: ${result.status}. Please try again.`
+        );
       }
     } catch (error: any) {
       console.error(JSON.stringify(error, null, 2));
@@ -128,7 +131,11 @@ export function SignUpForm() {
         {verificationErrors && (
           <p className="text-destructive text-sm mt-2">{verificationErrors}</p>
         )}
-        {isSubmitting && <p>Verifying...</p>}
+        {isSubmitting && (
+          <div className="flex justify-center items-center mt-4">
+            <Spinner size="small" />
+          </div>
+        )}
       </div>
     );
   }
@@ -139,9 +146,7 @@ export function SignUpForm() {
     <Form {...form}>
       {/* Use form.handleSubmit for submission */}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {authErrors && (
-          <p className="text-destructive text-sm">{authErrors}</p>
-        )}
+        {authErrors && <p className="text-destructive text-sm">{authErrors}</p>}
         <FormField
           control={form.control}
           name="email"
@@ -181,8 +186,12 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Signing Up..." : "Sign Up"}
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full flex justify-center items-center"
+        >
+          {isSubmitting ? <Spinner size="small" /> : "Sign Up"}
         </Button>
       </form>
     </Form>
